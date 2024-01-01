@@ -28,6 +28,8 @@ const PORT = 5000;
 app.use("/uploads", express.static("uploads"));
 
 app.post("/upload", upload.single("imageTest"), (req, res) => {
+  // 강제 서버 오류 발생
+  // return res.status(500).json({ error: "server fail" });
   console.log(req.file);
   res.json(req.file);
 });
