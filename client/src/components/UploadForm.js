@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import "./UploadForm.css";
 import ProgressBar from "./ProgressBar.js";
 import { toast } from "react-toastify";
+import { ImageContext } from "../context/ImageContext";
 
 const UploadForm = () => {
   const defaultFileNm = "이미지 파일을 업로드해주세요!";
+  const [images, setImages] = useContext(ImageContext);
 
   // file 변경 필요 시 setFile 함수 호출
   const [file, setFile] = useState(null);
@@ -30,12 +32,16 @@ const UploadForm = () => {
     const formData = new FormData();
     formData.append("imageTest", file);
     try {
-      const res = await axios.post("/uploads", formData, {
+      const res = await axios.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (e) => {
           setPercent(Math.round((100 * e.loaded) / e.total));
         },
       });
+
+      // 조회 이미지 목록에 업로드한 이미지 바로 추가
+      setImages([...images, res.data]);
+
       toast.success("이미지 업로드 성공!");
       setTimeout(() => {
         initForm();
